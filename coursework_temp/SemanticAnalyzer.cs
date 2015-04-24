@@ -7,6 +7,20 @@ using System.Text.RegularExpressions;
 
 namespace coursework_temp
 {
+    class UniqueWord
+    {
+        public String word;
+        public int count;
+        public float frequency;
+
+        public UniqueWord(String word)
+        {
+            this.word = word;
+            this.count = 1;
+            this.frequency = 0;
+        }
+    }
+
     class SemanticAnalyzer
     {
         String text;
@@ -24,9 +38,31 @@ namespace coursework_temp
             return Regex.Matches(text, "[A-Za-z]*(-[a-zA-Z]+)*").Cast<Match>().Select(match => match.Value).ToArray();
         }
 
-        public String[] UniqueWords()
+        public UniqueWord[] UniqueWords()
         {
-            return Words().Distinct().ToArray();
+            var words = Words().Distinct().ToArray();
+            var uniqueWordsList = new List<UniqueWord>();
+
+            int index;
+            foreach (String word in words)
+            {
+                if ((index = uniqueWordsList.FindIndex(uniqueWord => uniqueWord.word == word)) > -1)
+                {
+                    uniqueWordsList.ElementAt(index).count += 1;
+                }
+                else
+                {
+                    uniqueWordsList.Add(new UniqueWord(word));
+                }
+            }
+
+            var wordCount = words.Count();
+            foreach (UniqueWord uniqueWord in uniqueWordsList)
+            {
+                uniqueWord.frequency = uniqueWord.count / wordCount;
+            }
+
+            return uniqueWordsList.ToArray();
         }
 
         public int WordCount()
