@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace coursework_temp
 {
@@ -10,7 +11,10 @@ namespace coursework_temp
     {
         static void Main(string[] args)
         {
-
+            var drek = File.ReadAllText("C:\\dump\\text.txt");
+            var anl = new SemanticAnalyzer(drek);
+            Console.Write(anl.ToString());
+            Console.ReadLine();
         }
     }
 }
