@@ -105,7 +105,10 @@ namespace coursework_temp
                     semanticCore.Add(uniqueWord);
             }
 
-            return semanticCore.Take(15).ToArray();
+            if (semanticCore.Count > semanticCoreSize)
+                return semanticCore.Take(semanticCoreSize).ToArray();
+            else
+                return semanticCore.ToArray();
         }
 
         public int WordCount()
@@ -133,6 +136,13 @@ namespace coursework_temp
             foreach (UniqueWord uword in uniqueWords)
             {
                 result += "\t" + uword.ToString() + "\n";
+            }
+
+            result += "Semantic core:\n";
+            var semanticCore = SemanticCore();
+            foreach (UniqueWord scword in semanticCore)
+            {
+                result += "\t" + scword.ToString() + "\n";
             }
 
             return result;
