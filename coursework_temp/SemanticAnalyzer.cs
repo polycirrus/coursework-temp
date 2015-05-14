@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace coursework_temp
 {
@@ -28,6 +29,9 @@ namespace coursework_temp
 
     class SemanticAnalyzer
     {
+        const String stopDictionaryPath = "stop.txt";
+        const int semanticCoreSize = 15;
+
         String Text;
 
         public SemanticAnalyzer(String text)
@@ -53,14 +57,16 @@ namespace coursework_temp
             var words = Words();
 
             int i;
+            var lemmatizer = new LemmaSharp.LemmatizerPrebuiltCompact(LemmaSharp.LanguagePrebuilt.Russian);
             for (i = 0; i < words.Length; i++)
             {
-                words[i] = words[i].ToLower();
+                words[i] = lemmatizer.Lemmatize(words[i].ToLower());
+                
             }
 
-            words = words.Distinct().ToArray();
             var uniqueWordsList = new List<UniqueWord>();
 
+            //add words to list of unique words
             int index;
             foreach (String word in words)
             {
@@ -74,13 +80,32 @@ namespace coursework_temp
                 }
             }
 
+            //count frequencies
             var wordCount = words.Count();
             foreach (UniqueWord uniqueWord in uniqueWordsList)
             {
                 uniqueWord.Frequency = Convert.ToSingle(uniqueWord.Count) / Convert.ToSingle(wordCount);
             }
 
+            //sort list by words' counters
+            uniqueWordsList.Sort((x, y) => y.Count - x.Count);
+
             return uniqueWordsList.ToArray();
+        }
+
+        public UniqueWord[] SemanticCore()
+        {
+            var semanticCore = new List<UniqueWord>();
+            var stopWords = File.ReadAllLines(stopDictionaryPath);
+
+            var uniqueWords = UniqueWords();
+            foreach (UniqueWord uniqueWord in uniqueWords)
+            {
+                if (! stopWords.Contains(uniqueWord.Word))
+                    semanticCore.Add(uniqueWord);
+            }
+
+            return semanticCore.Take(15).ToArray();
         }
 
         public int WordCount()

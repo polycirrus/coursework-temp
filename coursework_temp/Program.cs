@@ -11,7 +11,7 @@ namespace coursework_temp
     {
         static void Main(string[] args)
         {
-            var drek = File.ReadAllText("C:\\dump\\text.txt");
+            var drek = File.ReadAllText("E:\\misc\\dump\\text.txt");
             var anl = new SemanticAnalyzer(drek);
             Console.Write(anl.ToString());
             Console.ReadLine();
